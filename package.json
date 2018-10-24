@@ -1,0 +1,28 @@
+{
+  "name": "writers-haven-api",
+  "version": "1.0.0",
+  "description": "An application for authors and readers to express themselves through writing",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Duncanian/writers-haven-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Duncanian/writers-haven-api/issues"
+  },
+  "homepage": "https://github.com/Duncanian/writers-haven-api#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "dotenv": "^6.1.0",
+    "express": "^4.16.4",
+    "morgan": "^1.9.1",
+    "nodemon": "^1.18.4"
+  }
+}
