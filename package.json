@@ -7,6 +7,7 @@
     "start": "nodemon server.js",
     "sequelize init": "node_modules/.bin/sequelize init",
     "db:seed": "node_modules/.bin/sequelize db:seed:all",
+    "lint": "./node_modules/.bin/eslint src/",
     "db:migrate": "node_modules/.bin/sequelize db:migrate",
     "db:rollback": "node_modules/.bin/sequelize db:migrate:undo:all",
     "db:rollmigrate": "yarn db:rollback && yarn db:migrate && yarn db:seed",
@@ -34,5 +35,10 @@
     "pg-hstore": "^2.3.2",
     "sequelize": "^4.41.0",
     "sequelize-cli": "^5.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.7.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0"
   }
 }
