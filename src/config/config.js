@@ -7,7 +7,7 @@ const config = {
   username: process.env.DATABASE_USER,
   databaseDialect: process.env.DATABASE_DIALECT || 'postgres',
   env: process.env.NODE_ENV || 'development',
-  password: process.env.password || null,
+  password: process.env.PASSWORD || null,
   host: process.env.HOST,
 };
 
