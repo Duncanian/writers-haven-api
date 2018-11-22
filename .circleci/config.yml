@@ -13,6 +13,9 @@ jobs:
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
       # - image: circleci/mongo:3.4.4
+    
+    environment:
+      CC_TEST_REPORTER_ID: abb64801fad1846e476a002a61fa05b3da0d3077f739336afe1045ed4b8d341f
 
     working_directory: ~/repo
 
@@ -26,17 +29,32 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
-      - run: yarn install
+      - run:
+        name: Install dependencies
+        command: |
+          yarn install
 
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-      # run linter
-      - run: yarn lint
-        
-      # run tests!
-      - run: yarn test
+      - run:
+        name: Run airbnb eslint
+        command: |
+          yarn lint
+
+      - run:
+          name: Install code climate test reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+
+      - run:
+          name: Run tests
+          command: |
+            ./cc-test-reporter before-build
+            yarn test --coverage
+            ./cc-test-reporter after-build --exit-code $?
 
 
