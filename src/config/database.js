@@ -1,4 +1,4 @@
-const config = require('./config')
+const config = require('./config');
 
 const defaultConfig = {
   database: config.database,
@@ -6,7 +6,7 @@ const defaultConfig = {
   password: config.password,
   host: config.host,
   dialect: config.databaseDialect,
-}
+};
 
 const database = {
   development: {
@@ -18,6 +18,6 @@ const database = {
   production: {
     ...defaultConfig,
   },
-}
+};
 
-module.exports = database
+module.exports = database;
