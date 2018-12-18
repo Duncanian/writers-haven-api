@@ -3,58 +3,124 @@
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
 version: 2
-jobs:
-  build:
-    docker:
-      # specify the version you desire here
+machine:
+  environment:
+    # Add the Postgres 9.6 binaries to the path.
+    PATH: /usr/lib/postgresql/11.1/bin/:$PATH
+
+  pre:
+    # Start Postgres 9.6.
+    - sudo service postgresql start 11.1
+
+    # Create a new test database.
+    - sudo -u postgres psql -p 5432 -c "create database test_db;"
+
+defaults: &defaults
+  docker:
       - image: circleci/node:carbon
-      
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
-    
-    environment:
-      CC_TEST_REPORTER_ID: abb64801fad1846e476a002a61fa05b3da0d3077f739336afe1045ed4b8d341f
+        environment:
+          NODE_ENV: test
+          PGUSER: root
+          DATABASE_URL: postgres://root@localhost/test_db
+          CC_TEST_REPORTER_ID: abb64801fad1846e476a002a61fa05b3da0d3077f739336afe1045ed4b8d341f
+      - image: circleci/postgres:11.1-alpine
+        environment:
+          POSTGRES_USER: root
+          POSTGRES_DB: test_db
+  working_directory: ~/writers-haven-api
 
-    working_directory: ~/repo
+install_npm_packages: &install_npm_packages
+  run:
+    name: Install Npm Dependencies
+    command: yarn install
 
+attach_workspace: &attach_workspace
+  attach_workspace:
+    at: ~/writers-haven-api
+
+persist_to_workspace: &persist_to_workspace
+  persist_to_workspace:
+    root: .
+    paths: .
+
+filters: &filters
+  filters:
+    branches:
+      only:
+        - develop
+        - master
+
+jobs:
+  checkout_code:
+    <<: *defaults
     steps:
       - checkout
-
       # Download and cache dependencies
       - restore_cache:
+          name: Restore Yarn Package Cache
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
-      - run:
-          name: Install dependencies
-          command: |
-            yarn install
+            - yarn-packages-{{ checksum "yarn.lock" }}
+      - *install_npm_packages
 
       - save_cache:
+          name: Save Yarn Package Cache
+          key: yarn-packages-{{ checksum "yarn.lock" }}
           paths:
+            - ~/.cache/yarn
             - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+      - *persist_to_workspace
 
+  test_and_report:
+    <<: *defaults
+    steps:
+      - *attach_workspace
+      - *install_npm_packages
       - run:
-          name: Run airbnb eslint
-          command: |
-            yarn lint
-
+          name: Run writers-haven-api lint test
+          command: yarn lint
+      - run:
+          name: install dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.6.1
+      - run:
+          name: Wait for postgres to be ready
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
       - run:
           name: Install code climate test reporter
           command: |
             curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
             chmod +x ./cc-test-reporter
-
       - run:
-          name: Run tests
+          name: Migrate database
+          command: |
+            yarn db:migrate
+      - run:
+          name: Run writers-haven-api test suites
           command: |
             ./cc-test-reporter before-build
-            yarn test --coverage
-            ./cc-test-reporter after-build --exit-code $?
+            yarn test
+            ./cc-test-reporter after-build -t lcov --exit-code $?
+      - *persist_to_workspace
 
+  deploy:
+    <<: *defaults
+    steps:
+      - setup_remote_docker
+      - *attach_workspace
+      - run:
+          name: Build and deploy writers-haven-api
+          command: |
+            chmod +x .circleci/build_deploy.sh
+            .circleci/build_deploy.sh main
 
+workflows:
+  version: 2
+  test_build_deploy:
+    jobs:
+      - checkout_code
+      - test_and_report:
+          requires:
+            - checkout_code
+      - deploy:
+          <<: *filters

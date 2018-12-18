@@ -4,9 +4,10 @@
   "description": "An application for authors and readers to express themselves through writing",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start:dev": "NODE_ENV=development DEBUG=log nodemon src/index.js",
     "lint": "./node_modules/.bin/eslint src/",
     "sequelize init": "node_modules/.bin/sequelize init",
+    "pretest": "NODE_ENV=test yarn db:migrate",
     "test": "node_modules/.bin/jest --no-cache  --detectOpenHandles --runInBand --forceExit",
     "db:seed": "node_modules/.bin/sequelize db:seed:all",
     "db:migrate": "node_modules/.bin/sequelize db:migrate",
@@ -65,7 +66,10 @@
     ],
     "coverageReporters": [
       "json",
-      "html"
+      "lcov"
     ]
+  },
+  "engines": {
+    "yarn": "1.12.x"
   }
 }
