@@ -4,9 +4,10 @@
   "description": "An application for authors and readers to express themselves through writing",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start:dev": "NODE_ENV=development DEBUG=log nodemon src/index.js",
     "lint": "./node_modules/.bin/eslint src/",
     "sequelize init": "node_modules/.bin/sequelize init",
+    "pretest": "NODE_ENV=test yarn db:migrate",
     "test": "node_modules/.bin/jest --no-cache  --detectOpenHandles --runInBand --forceExit",
     "db:seed": "node_modules/.bin/sequelize db:seed:all",
     "db:migrate": "node_modules/.bin/sequelize db:migrate",
@@ -26,20 +27,49 @@
   },
   "homepage": "https://github.com/Duncanian/writers-haven-api#readme",
   "dependencies": {
+    "bcrypt": "^3.0.2",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
+    "debug": "^4.1.0",
     "dotenv": "^6.1.0",
     "express": "^4.16.4",
+    "express-validator": "^5.3.0",
     "morgan": "^1.9.1",
     "nodemon": "^1.18.4",
     "pg": "^7.5.0",
     "pg-hstore": "^2.3.2",
     "sequelize": "^4.41.0",
-    "sequelize-cli": "^5.2.0"
+    "sequelize-cli": "^5.2.0",
+    "supertest": "^3.3.0"
   },
   "devDependencies": {
-    "eslint": "^5.7.0",
+    "chai": "^4.2.0",
+    "eslint": "^5.8.0",
     "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.14.0"
+    "eslint-plugin-import": "^2.14.0",
+    "jest": "^23.6.0",
+    "jest-cli": "^23.6.0",
+    "sequelize-test-helpers": "^1.0.6",
+    "sinon": "^7.1.0"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}",
+      "!src/index.js",
+      "!node_modules/"
+    ],
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/src/database/migrations",
+      "<rootDir>/src/database/seeders",
+      "<rootDir>/src/database/models/index.js"
+    ],
+    "coverageReporters": [
+      "json",
+      "lcov"
+    ]
+  },
+  "engines": {
+    "yarn": "1.12.x"
   }
 }
