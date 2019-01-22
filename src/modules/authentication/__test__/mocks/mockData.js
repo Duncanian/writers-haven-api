@@ -1,3 +1,7 @@
+const encPass = require('../../../../helpers/encrypt');
+
+const hashedPass = encPass.generateHash('Aa123!!!');
+
 const user = {
   user1: {
     username: '',
@@ -40,8 +44,26 @@ const userExist = [
   {
     username: 'tester',
     email: 'test@test.com',
-    password: 'Aa123!!!',
+    password: hashedPass,
   },
 ];
 
-module.exports = { user, userExist };
+const userLogin = {
+  user1: {
+    email: 'test@test.co.ke',
+    password: 'Aa123!!!',
+  },
+  user2: {
+    email: 'test@test.com',
+    password: 'Aa123!',
+  },
+  user3: {
+    email: 'test@test.com',
+  },
+  user4: {
+    email: 'test@test.com',
+    password: 'Aa123!!!',
+  },
+};
+
+module.exports = { user, userExist, userLogin };

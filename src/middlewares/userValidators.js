@@ -47,6 +47,11 @@ class AuthValidator {
     try {
       const { email, password } = req.body;
 
+      if (!email || !password) {
+        message = 'Kindly enter both email and password fields';
+        return reqResponses.handleError(message, 400, res);
+      }
+
       const passExists = await models.User.findOne({
         where: { email: email },
       });
