@@ -1,7 +1,7 @@
-const signupValidator = require('./userValidators');
+const AuthValidator = require('./userValidators');
 
 const middleware = {
-  signupValidator,
+  AuthValidator,
 };
 
 module.exports = middleware;
