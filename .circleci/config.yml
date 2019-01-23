@@ -111,8 +111,7 @@ jobs:
       - run:
           name: Build and deploy writers-haven-api
           command: |
-            chmod +x .circleci/build_deploy.sh
-            .circleci/build_deploy.sh main
+            chmod +x scripts/deploy.sh && scripts/deploy.sh
 
 workflows:
   version: 2
