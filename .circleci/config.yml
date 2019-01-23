@@ -105,13 +105,14 @@ jobs:
 
   deploy:
     <<: *defaults
+    docker:
+      - image: circleci/node:9.8.0
     steps:
       - setup_remote_docker
       - *attach_workspace
       - run:
           name: Build and deploy writers-haven-api
-          command: |
-            chmod +x scripts/deploy.sh && scripts/deploy.sh
+          command: chmod +x scripts/deploy.sh && scripts/deploy.sh
 
 workflows:
   version: 2
