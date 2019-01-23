@@ -103,17 +103,6 @@ jobs:
             ./cc-test-reporter after-build -t lcov --exit-code $?
       - *persist_to_workspace
 
-  deploy:
-    <<: *defaults
-    docker:
-      - image: circleci/node:9.8.0
-    steps:
-      - setup_remote_docker
-      - *attach_workspace
-      - run:
-          name: Build and deploy writers-haven-api
-          command: chmod +x scripts/deploy.sh && scripts/deploy.sh
-
 workflows:
   version: 2
   test_build_deploy:
@@ -122,5 +111,3 @@ workflows:
       - test_and_report:
           requires:
             - checkout_code
-      - deploy:
-          <<: *filters
