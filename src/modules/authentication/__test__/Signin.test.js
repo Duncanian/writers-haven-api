@@ -66,7 +66,7 @@ describe('Test login functionality', () => {
         console.log(res.header);
         console.log(res.status);
         console.log(res.body);
-        
+
         expect(res.body.success).toEqual(true);
         expect(res.body.message).toEqual('Login successful!');
         if (err) return done();
