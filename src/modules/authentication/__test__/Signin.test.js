@@ -63,10 +63,6 @@ describe('Test login functionality', () => {
       .send(userLogin.user)
       .expect(201)
       .end((err, res) => {
-        console.log(res.header);
-        console.log(res.status);
-        console.log(res.body);
-
         expect(res.body.success).toEqual(true);
         expect(res.body.message).toEqual('Login successful!');
         if (err) return done();
