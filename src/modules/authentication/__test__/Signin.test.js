@@ -60,10 +60,14 @@ describe('Test login functionality', () => {
     request(app)
       .post('/api/v1/signin')
       .set('Content-Type', 'application/json')
-      .send(userLogin.user4)
+      .send(userLogin.user)
       .expect(201)
       .end((err, res) => {
-        // expect(res.body.success).toEqual(true);
+        console.log(res.header);
+        console.log(res.status);
+        console.log(res.body);
+        
+        expect(res.body.success).toEqual(true);
         expect(res.body.message).toEqual('Login successful!');
         if (err) return done();
         done();
