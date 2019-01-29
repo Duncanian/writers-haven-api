@@ -60,7 +60,7 @@ describe('Test login functionality', () => {
     request(app)
       .post('/api/v1/signin')
       .set('Content-Type', 'application/json')
-      .send(userLogin.user)
+      .send(userLogin.user4)
       .expect(201)
       .end((err, res) => {
         expect(res.body.success).toEqual(true);
